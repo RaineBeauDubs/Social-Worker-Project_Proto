@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Login from './Login';
+import Register from './Register';
 
 const Authenticate = App =>
   class extends Component {
@@ -26,7 +27,7 @@ const Authenticate = App =>
       if (this.state.loggedIn) {
         return <App />
       } else {
-        return <Login />
+        return <Login /> || <Register />
       }
     }
   }

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { NavLink } from 'react-router-dom';
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: ''
+      username: '',
+      password: '',
+      loggedIn: false
     }
   };
 
@@ -19,14 +21,32 @@ class Login extends Component {
   setUser = event => {
     event.preventDefault();
     const user = {
-      email: this.state.email,
+      username: this.state.username,
       password: this.state.password
     }
     axios
-      .post('https://educell.herokuapp.com/api/login', user)
+      .post(
+        'https://educell.herokuapp.com/api/login',
+        user,
+        {
+          headers: {
+            Authorization: localStorage.getItem('token')
+          }
+        }
+      )
       .then(response => {
-        localStorage.setItem('token', response.data.token)
-      });
+        if (response.status === 200) {
+          localStorage.setItem('token', response.data.token)
+          console.log(response.data)
+          this.setState({
+            loggedIn: true
+          })
+        } else {
+          throw new Error()
+        }
+      })
+      .catch(error => console.log(error))
+    this.props.history.push('/students')
   }
 
   render() {
@@ -34,12 +54,12 @@ class Login extends Component {
       <div>
         <h1>Welcome Back to Educell</h1>
         <form onSubmit={this.setUser}>
-          <h2>Email</h2>
+          <h2>Username</h2>
           <input
             type='text'
-            name='email'
+            name='username'
             onChange={this.handleChange}
-            value={this.state.email}
+            value={this.state.username}
             required
           />
           <h2>Password</h2>
@@ -51,6 +71,9 @@ class Login extends Component {
             required
           />
           <button type='submit'>Sign In</button>
+          <NavLink to='/register'>
+            <h4>Don't have an account? Register here!</h4>
+          </NavLink>
           <h4>Forgot password?</h4>
           <h5>By logging in, you are agreeing to our terms of service</h5>
         </form>
