@@ -42,6 +42,13 @@ class Register extends Component {
       password,  
       organization 
     };
+
+    const token = localStorage.getItem('token');
+    const requestOptions = {
+      headers: {
+        authorization: token
+      }
+    }
     // const {
     //   firstName,
     //   lastName,
@@ -62,10 +69,8 @@ class Register extends Component {
     axios
       .post(
         'https://educell.herokuapp.com/api/register', 
-        newUser, 
-        { headers: {
-          Authorization: localStorage.getItem('token')
-        }}
+        newUser,
+        requestOptions 
       )
       .then(response => {
         if (response.status === 201) {
